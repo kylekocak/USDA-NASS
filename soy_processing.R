@@ -27,17 +27,17 @@ planted_final=planted %>% filter(!is.na(CT),!is.na(ST)) %>%
 
 yield_FIPS=left_join(yield_final,dat2) %>% select(-ST,-CT) %>% as.data.table
 final_FIPS=data.table(left_join(yield_FIPS,planted_final))
-final_FIPS %>%
+final = final_FIPS %>%
   filter(!is.na(Acres_Planted)) %>%
   group_by(Year) %>%
   arrange(-Acres_Planted) %>%
   mutate(perc_of_usa=round(cumsum(Acres_Planted)/sum(Acres_Planted) * 100,2),
          size_adjusted=round(Acres_Planted/(Land_Area*640),2),
          yield_over_usa=round(Yield/mean(Yield),2)) %>%
-  filter(Year==1974) %>% data.table %>%
-  head(n=100)
+  data.table()
 
-#fwrite(yield_acreage_FIPS,'SoyNASS19702018.csv')
+fwrite(final,'SoyNASS19702018.csv')
+
 capFirst =function(x){
   s=strsplit(x,' ')[[1]]
   paste0(toupper(substring(s, 1,1)), tolower(substring(s, 2)),collapse = ' ')
